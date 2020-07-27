@@ -1,0 +1,23 @@
+server:
+  port: 8000
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  # 设置静态资源目录（因为这个项目用的是jar包 所以引入外部目录）
+#  resources:
+#    static-locations: classpath:/META-INF/resources/, classpath:/resources/, classpath:/static/, classpath:/public/, file:${fileUpload.path}
+
+  # 上传文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 10MB   # 单个文件大小
+      max-request-size: 10MB # 请求总体大小
+
+# 文件保存路径
+#fileUpload:
+#    path: /Users/yupan/Desktop/upload
+
+
+
