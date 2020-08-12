@@ -35,6 +35,38 @@
 	</form>
 	<button onclick="saveImg();">保存</button>
 
+	<br>
+	id：<input type="text" id="id" name="id">
+	<button type="button" class="layui-btn" id="test2">上传文件</button><button onclick="downloadFile();">下载文件</button>
+	<div id="fileDIV"></div>
+	<br>
+
+
+
+	<div class="layui-form">
+		<div class="layui-form-item">
+			<label class="layui-form-label">物资：</label>
+			<div class="layui-input-inline"  >
+				<input id="product" name="product" type="hidden">
+				<select id="productSelect" name="productSelect" lay-filter="productSelect" lay-search="">
+					<option value="">直接选择或搜索选择</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="layui-inline">
+			<label class="layui-form-label">规格：</label>
+			<input id="model" name="model">
+		</div>
+
+		<div class="layui-inline">
+			<label class="layui-form-label">单位：</label>
+			<input id="unit" name="unit">
+		</div>
+	</div>
+	</div>
+	<button onclick="chooseProject();">提交</button>
+
 </body>
 
 <script src="jquery.js"></script>
@@ -45,11 +77,12 @@ $(function(){
 	//图片上传
 	layui.upload.render({
 		elem: '#test',
-		accept: 'images',      // 指定允许上传时校验的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
-		acceptMime: 'image/*', // 打开文件选择框时，筛选出的文件类型
-		auto: false, 		   // 是否选完文件后自动上传
-		size: 10240,  		   // 设置文件最大可允许上传的大小，单位 KB， 不支持ie8/9
-		multiple: true,		   // 是否允许多文件上传，设置 true即可开启，不支持ie8/9
+		accept: 'images',      	   // 指定允许上传时校验的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+		acceptMime: 'image/png,image/jpg,image/jpeg,image/gif', // 规定打开文件选择框时，筛选出的文件类型
+		exts: 'png|jpg|jpeg|gif',  // 允许上传的文件后缀
+		size: 10240,  		       // 设置文件最大可允许上传的大小，单位 KB， 不支持ie8/9
+		auto: false, 		       // 是否选完文件后自动上传
+		multiple: false,		   // 是否允许多文件上传
 		choose: function(obj){ // 选择文件后的回调
 			//预读本地文件示例，不支持ie8
 			obj.preview(function(index, file, result){
@@ -62,7 +95,75 @@ $(function(){
 			});
 		}
 	});
+
+	//文件上传
+	layui.upload.render({
+		elem: '#test2',
+		url: 'uploadFile',       // 请求url
+		accept: 'file',      	   // 指定允许上传时校验的文件类型，可选值有：images（图片）、file（所有文件）、video（视频）、audio（音频）
+		size: 10240,  		       // 设置文件最大可允许上传的大小，单位 KB， 不支持ie8/9
+		data: {id: function(){
+						return $("#id").val()
+					}
+		},
+		done: function(res, index, upload){ // 请求成功后的回调
+			alert(res.flag);
+
+		},
+		error: function(index, upload){
+			alert("上传失败！");
+		}
+	});
+
+
+
+	var html = '<option value="">直接选择或搜索选择</option>' +
+				'<option value="产品A||规格A||单位A" >产品A【规格A】</option>' +
+			   '<option value="产品B||规格B||单位B" >产品B【规格B】</option>' +
+			   '<option value="产品C||规格C||单位C" >产品C（规格C）</option>'+
+			   '<option value="产品C||规格C||单位C" >产品C阿道夫第三方的法师打发辅导费（规格C）</option>';
+	$("#productSelect").html(html);
+	// 刷新select选择框渲染
+	layui.form.render('select');
+
+	// 监听select选择
+	layui.form.on('select(productSelect)', function(data){
+		console.log(data.value); //得到被选中的值
+
+		if(data.value){
+			var arr = data.value.split("||");
+			if (arr.length>0) {
+				$("#product").val(arr[0]);
+			}
+			if (arr.length>1) {
+				$("#model").val(arr[1]);
+			}
+			if (arr.length>2) {
+				$("#unit").val(arr[2]);
+			}
+		} else {
+			$("#product").val("");
+			$("#model").val("");
+			$("#unit").val("");
+		}
+
+	});
+
 });
+
+/**
+ * 下载
+ */
+function downloadFile(){
+	window.location.href="downloadFile";
+}
+
+
+function chooseProject() {
+	console.log("product：" + $("#product").val());
+	console.log("model：" + $("#model").val());
+	console.log("unit：" + $("#unit").val());
+}
 
 /**
  * 删除图片

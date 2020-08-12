@@ -4,9 +4,9 @@ import org.springframework.boot.system.ApplicationHome;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.UUID;
 
 /**
@@ -64,6 +64,43 @@ public class FileUtils {
         //保存文件
         file.transferTo(dest);
         return fileName;
+    }
+
+    /**
+     * 下载
+     */
+    public static void download(String fileName, String filePath, HttpServletResponse response) throws Exception {
+        if (filePath == null) {
+            return;
+        }
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("content-Type", "multipart/form-data");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        // 文件保存路径
+        String realPath = getFilePath(filePath);
+        File file = new File(realPath);
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(file));
+            os = response.getOutputStream();
+            byte[] buffer = new byte[1024];
+            int len = is.read(buffer);
+            while(len != -1) {
+                os.write(buffer, 0, len);
+                len = is.read(buffer);
+            }
+            os.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (os != null) {
+                os.close();
+            }
+            if (is != null) {
+                is.close();
+            }
+        }
     }
 
     /**

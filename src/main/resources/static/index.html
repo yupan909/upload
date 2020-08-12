@@ -51,11 +51,32 @@
 	<button onclick="uploadBase64();">上传图片(Base64)</button>
 	<div id="imgBase64DIV"></div>
 
+	<input type="text" id="money" name="money">
+	正则表达式：<input type="text" id="reg" name="reg" style="width: 400px;">
+	<button onclick="test();">输入金额</button>
+
+	<br>
+
+	<input type="text" id="test1" name="test1">
+	<button onclick="test1();">encodeURI</button>
 
 </body>
 
 <script src="jquery.js"></script>
 <script type="text/javascript">
+
+	function test1() {
+		var val = $("#test1").val();
+		console.log(val + "->" + encodeURI(val));
+	}
+
+	function test() {
+		var reg = $("#reg").val();
+		console.log("reg=" + reg);
+		var regix = new RegExp(reg);
+		var money = $("#money").val();
+		alert(regix.test(money));
+	}
 
 	/**
 	 * 上传文件

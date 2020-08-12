@@ -94,4 +94,25 @@ public class FileController {
         }
         return BaseResult.successResult();
     }
+
+    /**
+     * 上传文件
+     */
+    @RequestMapping(value = "uploadFile", method = RequestMethod.POST)
+    public BaseResult uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("id") String id) throws Exception {
+        String fileName = FileUtils.upload(file);
+        System.out.println("OriginalFilename: " + file.getOriginalFilename());
+        System.out.println("fileName: " + fileName);
+        System.out.println("id:" + id);
+        return BaseResult.successResult();
+    }
+
+    /**
+     * 下载文件
+     */
+    @RequestMapping(value = "downloadFile", method = RequestMethod.GET)
+    public BaseResult downloadFile(HttpServletResponse response) throws Exception {
+        FileUtils.download("易酒批入职offer余攀0320.pdf", "a2991b5af077413691b2af3a098a887a.pdf", response);
+        return null;
+    }
 }
